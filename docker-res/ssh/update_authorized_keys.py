@@ -101,7 +101,10 @@ def get_authorized_keys_kubernetes(query_cache: list = []) -> (list, list):
             if request.status_code == 200:
                 key = request.text
         except requests.exceptions.ConnectTimeout:
-            print("Connection to {ip} timed out after {timeout} seconds. Will try to exec into the pod to retrieve the key.".format(ip=pod_ip, timeout=str(timeout_seconds)))
+            print("Connection to '{name}' (IP: {ip}) timed out after {timeout} seconds.".format(ip=pod_ip, name=name, timeout=str(timeout_seconds)))
+        except Exception as e:
+            print("Caught an exception: ", e)
+            print("Could not get public key from pod '{name}':".format(name=name))
 
         # If the API call did not work, try to exec into the pod. 
         # Make sure that the executing process has permission to exec into the target pod (e.g. when Kubernetes roles are used)
